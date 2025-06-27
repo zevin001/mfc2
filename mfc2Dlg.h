@@ -5,6 +5,7 @@
 #pragma once
 #include "SapClassBasic.h"
 #include "SapClassGui.h"
+#include "CIMAGE1.h"
 
 // Cmfc2Dlg 对话框
 class Cmfc2Dlg : public CDialogEx
@@ -27,9 +28,10 @@ protected:
 	HICON m_hIcon;
 
 	SapManager* m_Manager;
+	SapLocation locCam;
 	SapAcqDevice* m_AcqDevice;
 	SapBuffer* m_Buffers;
-	SapTransfer* m_Xfer;
+	SapTransfer* m_Transfer;
 	SapView* m_View;
 	SapLocation	locCam;
 	BYTE* TMPBUF;
@@ -48,12 +50,14 @@ protected:
 public:
 	static void XferCallback(SapXferCallbackInfo* pInfo);
 	void FindCamera();
-	//void OpenCamera();
-	//void CloseCamera();
-	//void UpdateUIera();
+	void OpenCamera();
+	void StartAcquisition();
+	void StopAcquisition();
+	void ReleaseCamera();
 
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedOk2();
 	afx_msg void OnBnClickedOk5();
 	afx_msg void OnBnClickedOk4();
+	CIMAGE1 m_ImageView;
 };

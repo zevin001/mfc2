@@ -59,6 +59,9 @@ Cmfc2Dlg::Cmfc2Dlg(CWnd* pParent /*=nullptr*/)
 void Cmfc2Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	// 绑定id
+	//DDX_Control(pDX, IDC_BUTTON1, m_btnStart);
+	DDX_Control(pDX, IDC_IMAGE1, m_ImageView);
 }
 
 BEGIN_MESSAGE_MAP(Cmfc2Dlg, CDialogEx)
@@ -188,25 +191,41 @@ void Cmfc2Dlg::XferCallback(SapXferCallbackInfo* pInfo)
 void Cmfc2Dlg::FindCamera() {
 	CAcqConfigDlg dlg(this, CAcqConfigDlg::ServerAcqDevice);
 	if (dlg.DoModal() == IDOK) {
-		m_strServer = dlg.GetLocation(); // 假设GetLocation()返回设备名
-		InitCamera();
+	locCam = dlg.GetLocation();
 	}
 }
 
 // 初始化相机
-void Cmfc2Dlg::InitCamera() {
+void Cmfc2Dlg::OpenCamera() {
 	// 伪代码，具体API请查阅你的SDK
-	m_pAcqDevice = new SapAcqDevice(m_strServer);
-	m_pBuffer = new SapBuffer(...);
-	m_pView = new SapView(m_pBuffer, this->GetSafeHwnd());
-	m_pTransfer = new SapAcqDeviceToBuf(m_pAcqDevice, m_pBuffer, XferCallback, this);
+	m_AcqDevice = new SapAcqDevice(locCam);
+	m_Buffers = new SapBuffer();
+	m_View = new SapView(m_Buffers, this->GetSafeHwnd());
+	m_Transfer = new SapAcqDeviceToBuf(m_AcqDevice, m_Buffers, XferCallback, this);
 	// 检查对象是否创建成功
-	// ...
+    if (m_AcqDevice && m_Buffers && m_View && m_Transfer) {
+		MessageBox(_T("初始化成功"));
+	}
 }
 
 // 启动采集
 void Cmfc2Dlg::StartAcquisition() {
-	if (m_pTransfer) m_pTransfer->Grab();
+	if (m_Transfer) m_Transfer->Grab();
+	m_ImageView.CreateObject();
+    m_ImageView.Attach(m_View->GetWindow());
+}
+
+// 停止采集和释放资源
+void Cmfc2Dlg::StopAcquisition() {
+	if (m_Transfer) m_Transfer->Freeze();
+}
+void Cmfc2Dlg::ReleaseCamera() {
+	// delete对象，释放资源
+	delete m_Transfer;
+	delete m_View;
+	delete m_Buffers;
+	delete m_AcqDevice;
+	MessageBox(_T("释放成功"));
 }
 
 // 事件处理函数
@@ -230,12 +249,4 @@ void Cmfc2Dlg::OnBnClickedOk5()
 void Cmfc2Dlg::OnBnClickedOk4()
 {
 	// TODO: 在此添加控件通知处理程序代码
-}
-
-// 停止采集和释放资源
-void Cmfc2Dlg::StopAcquisition() {
-	if (m_pTransfer) m_pTransfer->Freeze();
-}
-void Cmfc2Dlg::ReleaseCamera() {
-	// delete对象，释放资源
 }

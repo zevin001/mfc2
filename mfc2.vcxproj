@@ -186,6 +186,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CIMAGE1.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="mfc2.h" />
     <ClInclude Include="mfc2Dlg.h" />
@@ -194,6 +195,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CIMAGE1.cpp" />
     <ClCompile Include="mfc2.cpp" />
     <ClCompile Include="mfc2Dlg.cpp" />
     <ClCompile Include="pch.cpp">
